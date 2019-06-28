@@ -71,11 +71,17 @@ The `Album` component also benefits from the suspense functionality:
 
 ## API
 The `Suspense` component admits the following props:
-- `settings.duration`
-- `settings.run`
+- `settings.duration`: the number of milliseconds to wait before displaying the fallback slot 
+content
+- `settings.run`: a function to run on starting the `Suspense` component. That function will 
+receive the `dispatch` event emitter, and other relevant parameters (See example).
 
-It also pass the `dispatch` event emitter to its children slots. The event emitter serves to 
-communicate with the `Suspense` component, to singal completion, or error.
+It also pass the `dispatch` event emitter, and the `events` array of admitted events to its 
+children slots. The event emitter serves to communicate with the `Suspense` component, to singal 
+completion, or error. The `events` array holds the events handled by the `Suspense` component 
+(`const events = [TIMER_EXPIRED, SUCCEEDED, FAILED, START];`). Events being passed with an array,
+ you can rename the events at will. Here we use `DONE` instead of `SUCCEEDED` for the completion 
+ event.
 
 For instance, in the previous example, the `Album` component lazily loads an image. When the 
 image is loaded, completion is signaled and the wrapping `<a>` DOM element is displayed.
@@ -84,7 +90,63 @@ In the previous example too, in the main `App` component, the list of albums is 
 the `run` parameter of the `Suspense` component. When that is completed, the completion signal is
  sent to the `Suspense` component and the album list is displayed. 
 
+## Issues
+I ran into some issues when developing the component, some of which are linked to Svelte, others 
+to the DOM.
+
+Concerning Svelte:
+- Svelte being template-based, there is no functional composition available. The next best thing 
+is slot composition which is a very flexible mechanism, though the syntax of it can be confusing.
+ In particular the necessity to pass parameters and handle variable scoping (which comes for free 
+ with functions) requires to understand well the syntax proposed by Svelte.
+- [Component do not admit slots (yet)!!](https://github.com/sveltejs/svelte/issues/2080). That is
+ a strong limitation for this particular example, and leads to a component whose functionality is
+  not very robust (see below). 
+- I found what seems to be a bug in that imported variables are not 
+
+DOM-wise:
+- because of Svelte current limitations, we had to hide our default slot component by wrapping it
+ in an extra `div` and use `display:none` on that div. However, that extra `div` can conflict 
+ with the surrounding css, which it does in our examples (the surrounding `div` for an album is a
+ flex container, which handles direct children -- it would thus pass to handle a unique `div` 
+ children instead of a list of `Album` children).
+- we opted for a work-around, which is to display conditionally (with template `#if` logic) the 
+default slot component. However this lead to some obscure errors such as `li0 is not defined`. 
+I assumed this is connected to Svelte's internal and did not pursue the matter further. For this 
+demo, we ended up attached the `Suspense` component to the image loading, instea of the `ul` list
+ element, to avoid that error. This is however less user-friendly -- which is the goal of 
+ Suspense in the first place.
+
+On the bright side, the targetted API which uses slots looks good:
+ ````html
+ <Suspense let:dispatch="{dispatch}" let:events="{events}"  {settings} />
+   <Fallback slot="fallback" />
+   ... #Suuspended content
+ </Suspense >
+````
+ 
+For inline suspended content, it implies minimal to no modification of the 'suspended' component.
+ In the `Album` case, we only added an `onload` handler. In the `App` case, we added the `run` 
+ function to fetch data, separately from the view displaying the data, effectively decoupling the
+  view and the model within the template.
+
+However a usage which reuses existing components like:
+ ````html
+ <Suspense let:dispatch="{dispatch}" let:events="{events}"  {settings} />
+   <Fallback slot="fallback" />
+   <Suspended {dispatch} {events} {settings}/>
+ </Suspense >
+````
+
+involves wrapping those components in a `Suspended` component to put `dispatch`, `events`, and 
+`settings` in scope.
+
+I am new to Svelte so I did get something wrong, I welcome your friendly and helpful comments 
+(open an issue). Always happy to hear feedback.
+
+ 
 ## Get started
+
 
 ```bash
 npm install
