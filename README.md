@@ -5,6 +5,7 @@ gowtham](https://twitter.com/saigowthamr) that I reimplemented here with Svelte 
 
 ## What it is 
 ![suspense demo](assets/suspense%20demo.gif)
+![suspense demo](https://i.imgur.com/8RlblIm.gifv)
 
 ## Get started
 
