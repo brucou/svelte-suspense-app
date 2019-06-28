@@ -68,6 +68,22 @@ The `Album` component also benefits from the suspense functionality:
 </ul>
 
 ```
+
+## API
+The `Suspense` component admits the following props:
+- `settings.duration`
+- `settings.run`
+
+It also pass the `dispatch` event emitter to its children slots. The event emitter serves to 
+communicate with the `Suspense` component, to singal completion, or error.
+
+For instance, in the previous example, the `Album` component lazily loads an image. When the 
+image is loaded, completion is signaled and the wrapping `<a>` DOM element is displayed.
+
+In the previous example too, in the main `App` component, the list of albums is fetched, using 
+the `run` parameter of the `Suspense` component. When that is completed, the completion signal is
+ sent to the `Suspense` component and the album list is displayed. 
+
 ## Get started
 
 ```bash
