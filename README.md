@@ -144,10 +144,21 @@ involves wrapping those components in a `Suspended` component to put `dispatch`,
 I am new to Svelte so I did get something wrong, I welcome your friendly and helpful comments 
 (open an issue). Always happy to hear feedback.
 
+## Using state machines
+I implemented `Suspense` with the [Kingly](https://github.com/brucou/kingly) state machine. This 
+is not strictly necessarily and the implementation can be replaced by a simple function with no 
+dependency (that is a fundamental objective of Kingly). That function may actually be the result 
+of compiling the Kingly machine, just like Svelte compiles its template. A state machine is but a
+ template for behaviour.
  
+While probably too much for a simple behaviour like Suspense, the technique can however be 
+generalized easily to more complex scenarios -- only by modifying the underlying machine. Such a 
+complex scenario could be handling the synchronization/scheduling of competing content, just like
+ React Concurrent does (with probably less flexibility -- it remains to be understood properly). 
+ This would be possible without any change in architecture, or impact in the Svelte compiler. All
+  this is very preliminary but those are interesting tracks to follow.
+
 ## Get started
-
-
 ```bash
 npm install
 npm run start
