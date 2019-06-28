@@ -14,10 +14,7 @@
     "rollup-plugin-postcss": "^2.0.3"
   },
   "dependencies": {
-    "suspense-fsm": "^0.5.0",
-    "kingly": "latest",
-    "svelte-machine": "latest",
-    "emitonoff": "^0.1.0",
+    "svelte-suspense": "^0.8.0",
     "axios": "^0.19.0",
     "svelte-lazyload": "^0.0.4",
     "moment": "^2.24.0"

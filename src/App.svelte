@@ -1,7 +1,4 @@
 <script>
-  import {commands, events, fsmDef, properties} from "suspense-fsm"
-  import {createStateMachine} from "kingly"
-  import Machine from "svelte-machine"
   import { LazyLoadContainer, LazyLoad } from 'svelte-lazyload';
   import Album from "./Album.svelte"
   import Header from "./Header.svelte"

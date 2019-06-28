@@ -1,13 +1,15 @@
 <script>
 
-import "./header.css";
-
 </script>
 
+<style>
+.link {
+       text-decoration: none;
+       color: white;
+       border-bottom: 1px solid red;
+}
+</style>
+
 <header class="header">
-  <a href="https://saigowthamr.github.io/Itunes-Top-100-albums/" style="
-       text-decoration: 'none';
-       color: 'white';
-       border-bottom: '1px solid red';
-  ">Top 100 Albums from Itunes</a>
+  <h1>Top 100 Albums from Itunes</h1>
 </header>
