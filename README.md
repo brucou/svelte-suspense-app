@@ -4,7 +4,6 @@ inspired from [previous work](https://reactgo.com/tutorial-reactlazy-react-suspe
 gowtham](https://twitter.com/saigowthamr) that I reimplemented here with Svelte in lieu of React.
 
 ## What it is 
-![suspense demo](assets/suspense%20demo.gif)
 ![suspense demo](https://i.imgur.com/8RlblIm.gifv)
 
 ## Get started
