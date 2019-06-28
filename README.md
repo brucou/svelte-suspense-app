@@ -43,6 +43,31 @@ The `Suspense` component behaviour is better summarized with the defining state 
 
 ![suspense finite state machine](assets/suspense%20machine.png)
 
+The `Album` component also benefits from the suspense functionality:
+
+```javascript
+<ul class="album">
+    <li class="album-item">
+        <Suspense let:dispatch={dispatch} let:events="{events}" settings="{{duration: 0}}">
+            <div slot="fallback" class="album-img">
+                <img alt="" src="https://media.giphy.com/media/y1ZBcOGOOtlpC/200.gif" />
+            </div>
+            <a href={link} target="blank" class="link">
+                <img class="album-img"
+                     on:load="{() => {dispatch({[events[DONE]]: void 0})}}"
+                     src={image}
+                     alt={'itunes' + Math.random()} />
+            </a>
+        </Suspense>
+    </li>
+    <li class="title album-item">
+        <a href={link} target="blank" class="link">
+            {title.slice(0, 20)}..</a></li>
+    <li class="price album-item">Price:{price}</li>
+    <li class="date album-item">Released:{formatDate(date, "MMM Do YY")}</li>
+</ul>
+
+```
 ## Get started
 
 ```bash
