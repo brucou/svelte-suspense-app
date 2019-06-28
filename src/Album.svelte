@@ -1,6 +1,7 @@
 <script>
 import moment from 'moment';
-import Suspense from 'svelte-suspense';
+// import Suspense from 'svelte-suspense';
+import Suspense from './Suspense.svelte';
 
 export let album;
 $: image=album["im:image"][2].label
@@ -20,9 +21,9 @@ const DONE = 1
 
 <ul class="album">
     <li class="album-item">
-        <Suspense let:dispatch={dispatch} let:events="{events}">
+        <Suspense let:dispatch={dispatch} let:events="{events}" settings="{{duration: 0}}">
             <div slot="fallback" class="album-img">
-                  <img alt="" src="https://media.giphy.com/media/y1ZBcOGOOtlpC/200.gif" />
+                <img alt="" src="https://media.giphy.com/media/y1ZBcOGOOtlpC/200.gif" />
             </div>
             <a href={link} target="blank" class="link">
                 <img class="album-img"

@@ -1,38 +1,19 @@
-*Psst  looking for a shareable component template? Go here --> [sveltejs/component-template](https://github.com/sveltejs/component-template)*
+## Motivation
+This is a proof of concept for offering functionality similar to that of React Suspense. It is 
+inspired from [previous work](https://reactgo.com/tutorial-reactlazy-react-suspense/) by [Sai 
+gowtham](https://twitter.com/saigowthamr) that I reimplemented here with Svelte in lieu of React.
 
----
-
-# svelte app
-
-This is a project template for [Svelte](https://svelte.dev) apps. It lives at https://github.com/sveltejs/template.
-
-To create a new project based on this template using [degit](https://github.com/Rich-Harris/degit):
-
-```bash
-npx degit sveltejs/template svelte-app
-cd svelte-app
-```
-
-*Note that you will need to have [Node.js](https://nodejs.org) installed.*
-
+## What it is 
+![suspense demo](assets/suspense%20demo.gif)
 
 ## Get started
 
-Install the dependencies...
-
 ```bash
-cd svelte-app
 npm install
+npm run start
 ```
 
-...then start [Rollup](https://rollupjs.org):
-
-```bash
-npm run dev
-```
-
-Navigate to [localhost:5000](http://localhost:5000). You should see your app running. Edit a component file in `src`, save it, and reload the page to see your changes.
-
+Navigate to [localhost:5000](http://localhost:5000). You should see your app running.
 
 ## Deploying to the web
 
@@ -51,18 +32,3 @@ now
 ```
 
 As an alternative, use the [Now desktop client](https://zeit.co/download) and simply drag the unzipped project folder to the taskbar icon.
-
-### With [surge](https://surge.sh/)
-
-Install `surge` if you haven't already:
-
-```bash
-npm install -g surge
-```
-
-Then, from within your project folder:
-
-```bash
-npm run build
-surge public
-```

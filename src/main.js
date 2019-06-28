@@ -5,3 +5,5 @@ var app = new App({
 });
 
 export default app;
+
+// https://codesandbox.io/s/svelte-suspense-demo-cpwre

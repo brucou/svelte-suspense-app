@@ -1,17 +1,3 @@
-.albums {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 300px));
-    grid-gap: 1rem;
-    justify-content: center;
-    font-weight: 400;
-}
-
-.load {
-    display: flex;
-    justify-content: center;
-    align-content: center;
-}
-
 *, :after, :before {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
