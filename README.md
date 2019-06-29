@@ -13,14 +13,11 @@ The main screen which will hold the loaded image is handled with a suspense func
 let albums=[];
 const DONE=1;
 
-const settings = {
-  run: (dispatch, {commands, events, properties, settings}) => {
-    axios.get(iTunesUrl)
+function fetchAlbums(dispatch, {commands, events, properties, settings}){
+ axios.get(iTunesUrl)
       .then(res => {albums = res.data.feed.entry})
       .then(() => dispatch({[events[DONE]]: void 0}))
-    },
-    duration: 10
-};
+}
     
 <div class="app">
     <Header />
