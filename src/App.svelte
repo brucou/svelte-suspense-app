@@ -14,22 +14,18 @@
 	let albums=[];
 	const DONE=1;
 
-    const settings = {
-      run: (dispatch, {commands, events, properties, settings}) => {
-        axios.get(iTunesUrl)
+	function fetchAlbums(dispatch, {commands, events, properties, settings}){
+     axios.get(iTunesUrl)
           .then(res => {albums = res.data.feed.entry})
           .then(() => dispatch({[events[DONE]]: void 0}))
-        },
-        duration: 10
-    };
+    }
 
 </script>
-
 
 <div class="app">
     <Header />
     <div class="albums">
-        <Suspense {settings}>
+        <Suspense settings={{run: fetchAlbums, duration: 10}}>
             <div slot="fallback" class="album-img">
                 <img alt="" src="https://media.giphy.com/media/y1ZBcOGOOtlpC/200.gif" />
             </div>
