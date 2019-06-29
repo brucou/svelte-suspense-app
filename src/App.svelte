@@ -12,12 +12,12 @@
 
 	// Define the rendering props
 	let albums=[];
-	const DONE=1;
 
 	function fetchAlbums(dispatch, {commands, events, properties, settings}){
-     axios.get(iTunesUrl)
-          .then(res => {albums = res.data.feed.entry})
-          .then(() => dispatch({[events[DONE]]: void 0}))
+	  const [TIMER_EXPIRED, SUCCEEDED, FAILED, START] = events;
+      axios.get(iTunesUrl)
+           .then(res => {albums = res.data.feed.entry})
+           .then(() => dispatch({[events[SUCCEEDED]]: void 0}))
     }
 
 </script>
