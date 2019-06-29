@@ -154,8 +154,8 @@ I am new to Svelte so I did get something wrong, I welcome your friendly and hel
 (open an issue). Always happy to hear feedback.
 
 ## Using state machines
-I implemented `Suspense` with the [Kingly](https://github.com/brucou/kingly) state machine. This 
-is not strictly necessarily and the implementation can be replaced by a simple function with no 
+I implemented `Suspense` with the [Kingly](https://github.com/brucou/kingly) state machine library. 
+This is not strictly necessarily and the implementation can be replaced by a simple function with no 
 dependency (that is a fundamental objective of Kingly). That function may actually be the result 
 of compiling the Kingly machine, just like Svelte compiles its template. A state machine is but a
  template for behaviour.
