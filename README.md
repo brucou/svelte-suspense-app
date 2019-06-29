@@ -163,7 +163,8 @@ of compiling the Kingly machine, just like Svelte compiles its template. A state
 While using a formalized state machine may feel like too much for a simple behaviour like 
 Suspense, the technique can however be generalized easily to more complex scenarios -- only by 
 modifying the underlying machine. Such a complex scenario could be handling the 
-synchronization/scheduling of competing content, just like React Concurrent does (with probably less flexibility -- it remains to be understood properly). This would be possible without any change in architecture, or impact in the Svelte compiler. All
+synchronization/scheduling of competing content, similar to but with less flexibility than React 
+Concurrent. This would be possible without any change in architecture, or impact in the Svelte compiler. All
   this is very preliminary but those are interesting tracks to follow.
 
 ## Get started
