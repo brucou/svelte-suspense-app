@@ -25,7 +25,7 @@ const settings = {
 <div class="app">
     <Header />
     <div class="albums">
-        <Suspense {settings}>
+        <Suspense settings={{run: fetchAlbums, duration: 10}}>
             <div slot="fallback" class="album-img">
                 <img alt="" src="https://media.giphy.com/media/y1ZBcOGOOtlpC/200.gif" />
             </div>
