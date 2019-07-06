@@ -12,7 +12,7 @@ The main screen which will hold the loaded image is handled with a suspense func
 ````html
 let albums=[];
 
-function fetchAlbums(intents, {settings}){
+function fetchAlbums(intents, {task, timeout}){
   const {done, failed} = intents;
   axios.get(iTunesUrl)
        .then(res => {albums = res.data.feed.entry})
