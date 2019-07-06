@@ -1,7 +1,7 @@
 <script>
 import moment from 'moment';
-// import Suspense from 'svelte-suspense';
-import Suspense from './Suspense.svelte';
+import Suspense from 'svelte-suspense';
+// import Suspense from './Suspense.svelte';
 
 export let album;
 $: image=album["im:image"][2].label
@@ -21,13 +21,13 @@ const DONE = 1
 
 <ul class="album">
     <li class="album-item">
-        <Suspense let:dispatch={dispatch} let:events="{events}" settings="{{duration: 0}}">
+        <Suspense let:intents={{done, failed}} timeout=0>
             <div slot="fallback" class="album-img">
                 <img alt="" src="https://media.giphy.com/media/y1ZBcOGOOtlpC/200.gif" />
             </div>
             <a href={link} target="blank" class="link">
                 <img class="album-img"
-                     on:load="{() => {dispatch({[events[DONE]]: void 0})}}"
+                     on:load="{() => done(void 0)}"
                      src={image}
                      alt={'itunes' + Math.random()} />
             </a>

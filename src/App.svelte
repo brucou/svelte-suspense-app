@@ -2,7 +2,8 @@
   // import { LazyLoadContainer, LazyLoad } from 'svelte-lazyload';
   import  LazyLoad from './LazyLoad.svelte';
   import  LazyLoadContainer from './LazyLoadContainer.svelte';
-  import Suspense from "./Suspense.svelte"
+  import Suspense from "svelte-suspense"
+  // import Suspense from "./Suspense.svelte"
   import Album from "./Album.svelte"
   import Header from "./Header.svelte"
   import axios from "axios";
@@ -13,11 +14,11 @@
 	// Define the rendering props
 	let albums=[];
 
-	function fetchAlbums(dispatch, {commands, events, properties, settings}){
-	  const [TIMER_EXPIRED, SUCCEEDED, FAILED, START] = events;
+	function fetchAlbums(intents, {settings}){
+	  const {done, failed} = intents;
       axios.get(iTunesUrl)
            .then(res => {albums = res.data.feed.entry})
-           .then(() => dispatch({[events[SUCCEEDED]]: void 0}))
+           .then(() => done(void 0))
     }
 
 </script>
@@ -25,7 +26,7 @@
 <div class="app">
     <Header />
     <div class="albums">
-        <Suspense settings={{run: fetchAlbums, duration: 10}}>
+        <Suspense task={fetchAlbums} timeout=10>
             <div slot="fallback" class="album-img">
                 <img alt="" src="https://media.giphy.com/media/y1ZBcOGOOtlpC/200.gif" />
             </div>

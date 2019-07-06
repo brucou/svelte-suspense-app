@@ -1,12 +1,15 @@
 <script>
 import {NO_OUTPUT, createStateMachine} from "kingly"
 import emitonoff from "emitonoff";
-import {commands, events, factory, fsmDef, properties} from "suspense-fsm"
+// import {commands, events, factory, fsmDef, properties} from "suspense-fsm"
+import {commands, events, factory, fsmDef, properties} from "./svelte-suspense-fsm"
+
 
 // props
 export let commandHandlers;
 export let effectHandlers;
-export let settings;
+export let task;
+export let timeout;
 
 let done;
 let stillLoading;
@@ -18,44 +21,6 @@ const noDisplay="none";
 const [TIMER_EXPIRED, DONE, FAILED, START] = events;
 const [COMMAND_RENDER, RUN, START_TIMER] = commands ;
 const [FALLBACK, MAIN, ERR] = properties;
-
-const defaultCommandHandlers = {
-  [START_TIMER] : function (dispatch, params, effectHandlers) {
-    const duration = params; // in ms
-		const { setTimeout } = effectHandlers;
-		setTimeout(() => dispatch({[TIMER_EXPIRED]: void 0}), duration)
-  },
-  [RUN]: function (dispatch, params, effectHandlers) {
-    const run = params;
-    run(dispatch, {commands, events, properties, settings});
-  },
-  [COMMAND_RENDER]: function (dispatch, params, effectHandlers){
-    const {display, data} = params;
-    done = display === MAIN;
-    stillLoading = display === FALLBACK;
-    errorOccurred = display === ERR;
-  },
-}
-const defaultEffectHandlers = {
-		setTimeout: (fn, duration) => window.setTimeout(fn, duration)
-	};
-const initEvent = {[START]: void 0}
-
-// Special handling of render command: compose default and custom processing
-const customRender =commandHandlers && commandHandlers[COMMAND_RENDER];
-const defaultRender = defaultCommandHandlers[COMMAND_RENDER];
-let finalRenderHandler={};
-if (customRender){
-  finalRenderHandler = {
-    [COMMAND_RENDER]: function compose(dispatch, params, effectHandlers){
-    defaultRender(dispatch, params, effectHandlers);
-    customRender (dispatch, params, effectHandlers);
-  }
-  }
-}
-
-const finalCommandHandlers = Object.assign({}, defaultCommandHandlers, commandHandlers, finalRenderHandler);
-const finalEffectHandlers = Object.assign({}, defaultEffectHandlers, effectHandlers);
 
 // Event emitter
 const getEventEmitterAdapter = emitonoff => {
@@ -74,12 +39,52 @@ const getEventEmitterAdapter = emitonoff => {
 const eventEmitter = getEventEmitterAdapter(emitonoff);
 const next = eventEmitter.next.bind(eventEmitter);
 // NOTE: this is a Svelte quirk. The imported `events` is not taken into account otherwise
-const _events = events;
-const _properties = properties;
-const _commands = commands;
+const intents = {
+  done: (data) => next({[DONE]: data}),
+  failed: (data) => next({[FAILED]: data}),
+};
+
+const defaultCommandHandlers = {
+  [START_TIMER] : function (dispatch, params, effectHandlers) {
+    const duration = params; // in ms
+		const { setTimeout } = effectHandlers;
+		setTimeout(() => dispatch({[TIMER_EXPIRED]: void 0}), duration)
+  },
+  [RUN]: function (dispatch, params, effectHandlers) {
+    const run = params;
+    run(intents, {task, timeout});
+  },
+  [COMMAND_RENDER]: function (dispatch, params, effectHandlers){
+    const {display, data} = params;
+    done = display === MAIN;
+    stillLoading = display === FALLBACK;
+    errorOccurred = display === ERR;
+  },
+}
+const defaultEffectHandlers = {
+		setTimeout: (fn, duration) => window.setTimeout(fn, duration)
+	};
+const initEvent = {[START]: void 0}
+
+
+// Special handling of render command: compose default and custom processing
+const customRender =commandHandlers && commandHandlers[COMMAND_RENDER];
+const defaultRender = defaultCommandHandlers[COMMAND_RENDER];
+let finalRenderHandler={};
+if (customRender){
+  finalRenderHandler = {
+    [COMMAND_RENDER]: function compose(dispatch, params, effectHandlers){
+    defaultRender(dispatch, params, effectHandlers);
+    customRender (dispatch, params, effectHandlers);
+  }
+  }
+}
+
+const finalCommandHandlers = Object.assign({}, defaultCommandHandlers, commandHandlers, finalRenderHandler);
+const finalEffectHandlers = Object.assign({}, defaultEffectHandlers, effectHandlers);
 
 // Create the machine
-const fsm = createStateMachine(fsmDef, Object.assign({}, settings, {debug:{console}}));
+const fsm = factory(Object.assign({}, {task, timeout}, {debug:{console}}));
 
 // Subscribing to machine events
 eventEmitter.subscribe({
@@ -139,15 +144,15 @@ eventEmitter.subscribe({
 </style>
 
 {#if stillLoading }
-  <slot name="fallback" dispatch={next} events={_events} commands={_commands} properties={_properties}></slot>
+  <slot name="fallback" dispatch={next} intents={intents} ></slot>
 {/if }
 {#if errorOccurred }
-  <slot name="error" dispatch={next} events={_events} commands={_commands} properties={_properties}></slot>
+  <slot name="error" dispatch={next} intents={intents} ></slot>
 {/if }
 {#if done }
-<slot dispatch={next} events={_events} commands={_commands} properties={_properties}></slot>
+  <slot dispatch={next} intents={intents} ></slot>
 {:else }
 <div class="incognito">
-  <slot dispatch={next} events={_events} commands={_commands} properties={_properties}></slot>
+  <slot dispatch={next} intents={intents} ></slot>
   </div>
 {/if }
