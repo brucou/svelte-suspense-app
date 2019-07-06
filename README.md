@@ -12,17 +12,17 @@ The main screen which will hold the loaded image is handled with a suspense func
 ````html
 let albums=[];
 
-function fetchAlbums(dispatch, {commands, events, properties, settings}){
-  const [TIMER_EXPIRED, SUCCEEDED, FAILED, START] = events;
+function fetchAlbums(intents, {settings}){
+  const {done, failed} = intents;
   axios.get(iTunesUrl)
        .then(res => {albums = res.data.feed.entry})
-       .then(() => dispatch({[events[SUCCEEDED]]: void 0}))
+       .then(() => done(void 0))
 }
-    
+ 
 <div class="app">
     <Header />
     <div class="albums">
-        <Suspense settings={{run: fetchAlbums, duration: 10}}>
+        <Suspense task={fetchAlbums} timeout=10>
             <div slot="fallback" class="album-img">
                 <img alt="" src="https://media.giphy.com/media/y1ZBcOGOOtlpC/200.gif" />
             </div>
@@ -45,8 +45,7 @@ hidden (`display: none`). Two things can happen:
 - the default slot content signals completion before `settings.duration` milliseconds. In that 
 case, the slot content is displayed as soon as it has indicated completion
 - the default slot content does not signal completion before `settings.duration` milliseconds 
-expires. In that case, the fallback content (e.g. the `fallback` slot content) will be displayed
-. When the default slot content signals completion, it will be displayed.
+expires. In that case, the fallback content (e.g. the `fallback` slot content) will be displayed. When the default slot content signals completion, it will be displayed.
  
 The `Suspense` component behaviour is better summarized with the defining state machine:
 
@@ -57,13 +56,13 @@ The `Album` component also benefits from the suspense functionality:
 ```javascript
 <ul class="album">
     <li class="album-item">
-        <Suspense let:dispatch={dispatch} let:events="{events}" settings="{{duration: 0}}">
+        <Suspense let:intents={{done, failed}} timeout=0 >
             <div slot="fallback" class="album-img">
                 <img alt="" src="https://media.giphy.com/media/y1ZBcOGOOtlpC/200.gif" />
             </div>
             <a href={link} target="blank" class="link">
                 <img class="album-img"
-                     on:load="{() => {dispatch({[events[DONE]]: void 0})}}"
+                     on:load="{() => done(void 0)}"
                      src={image}
                      alt={'itunes' + Math.random()} />
             </a>
@@ -80,23 +79,23 @@ The `Album` component also benefits from the suspense functionality:
 
 ## API
 The `Suspense` component admits the following props:
-- `settings.duration`: the number of milliseconds to wait before displaying the fallback slot 
+- `timeout`: the number of milliseconds to wait before displaying the fallback slot 
 content
-- `settings.run`: a function to run on starting the `Suspense` component. That function will 
-receive the `dispatch` event emitter, and other relevant parameters (See example).
+- `task`: a function to run on starting the `Suspense` component. That function will 
+receive an object parameter `{done, failed}` which can be used to indicate termination or failure
+ to the underlying suspense state machine. 
 
-It also pass the `dispatch` event emitter, and the `events` array of admitted events to its 
-children slots. The event emitter serves to communicate with the `Suspense` component, to singal 
-completion, or error. The `events` array holds the events handled by the `Suspense` component 
-(`const events = [TIMER_EXPIRED, SUCCEEDED, FAILED, START];`). Events being passed with an array,
- you can rename the events at will. Here we use `DONE` instead of `SUCCEEDED` for the completion 
- event.
+The `Suspense` component also passes on the `intents` parameter to its children slots. The 
+aforementioned parameter is an object with properties `{done, failed}` which can be used to 
+indicate termination or failure to the underlying suspense state machine. Both properties are 
+function which can also pass event data if necessary.  
 
 For instance, in the previous example, the `Album` component lazily loads an image. When the 
-image is loaded, completion is signaled and the wrapping `<a>` DOM element is displayed.
+image is loaded, completion is signaled and the wrapping `<a>` DOM element is displayed. In this 
+example, there is no need to pass data with the `done` or `failed` events. 
 
 In the previous example too, in the main `App` component, the list of albums is fetched, using 
-the `run` parameter of the `Suspense` component. When that is completed, the completion signal is
+the `task` parameter of the `Suspense` component. When that is completed, the completion signal is
  sent to the `Suspense` component and the album list is displayed. 
 
 ## Issues
@@ -128,7 +127,7 @@ demo, we ended up attached the `Suspense` component to the image loading, instea
 
 On the bright side, the targetted API which uses slots looks good:
  ````html
- <Suspense let:dispatch="{dispatch}" let:events="{events}"  {settings} />
+ <Suspense task={fetchAlbums} timeout=10>
    <Fallback slot="fallback" />
    ... #Suuspended content
  </Suspense >
@@ -141,14 +140,13 @@ For inline suspended content, it implies minimal to no modification of the 'susp
 
 However a usage which reuses existing components like:
  ````html
- <Suspense let:dispatch="{dispatch}" let:events="{events}"  {settings} />
+ <Suspense let:intents={{done, failed}} timeout=0>
    <Fallback slot="fallback" />
-   <Suspended {dispatch} {events} {settings}/>
+   <Suspended {intents} />
  </Suspense >
 ````
 
-involves wrapping those components in a `Suspended` component to put `dispatch`, `events`, and 
-`settings` in scope.
+involves wrapping those components in a `Suspended` component to put `intents`  in scope.
 
 I am new to Svelte so I did get something wrong, I welcome your friendly and helpful comments 
 (open an issue). Always happy to hear feedback.
@@ -162,10 +160,13 @@ of compiling the Kingly machine, just like Svelte compiles its template. A state
  
 While using a formalized state machine may feel like too much for a simple behaviour like 
 Suspense, the technique can however be generalized easily to more complex scenarios -- only by 
-modifying the underlying machine. Such a complex scenario could be handling the 
-synchronization/scheduling of competing content, similar to but with less flexibility than React 
-Concurrent. This would be possible without any change in architecture, or impact in the Svelte compiler. All
-  this is very preliminary but those are interesting tracks to follow.
+modifying the underlying machine. 
+
+A more complex scenario could be to implement a more sophisticated version of suspense which 
+deals with a full range of lazy loading formula as described in this excellent [CSS tricks article](https://css-tricks.com/the-complete-guide-to-lazy-loading-images/). 
+
+Another complex scenario could be handling the synchronization/scheduling of competing content, 
+similar to but with less flexibility than React Concurrent. This would be possible without any change in architecture, or impact in the Svelte compiler. All this is very preliminary but those are interesting tracks to follow.
 
 ## Get started
 ```bash
@@ -175,20 +176,3 @@ npm run start
 
 Navigate to [localhost:5000](http://localhost:5000). You should see your app running.
 
-## Deploying to the web
-
-### With [now](https://zeit.co/now)
-
-Install `now` if you haven't already:
-
-```bash
-npm install -g now
-```
-
-Then, from within your project folder:
-
-```bash
-now
-```
-
-As an alternative, use the [Now desktop client](https://zeit.co/download) and simply drag the unzipped project folder to the taskbar icon.

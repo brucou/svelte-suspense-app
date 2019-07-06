@@ -125,6 +125,7 @@ export function factory(settings){
   return createStateMachine(fsmDef, settings)
 }
 
+// TODO:  compile the factory into a regular function
 function compiledFactory(settings){
   return function suspenseFsm(event){
     const eventName =
