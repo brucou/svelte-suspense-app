@@ -1,4 +1,4 @@
-import { COMMAND_RENDER, INIT_EVENT, createStateMachine } from "kingly"
+import { COMMAND_RENDER, createStateMachine, INIT_EVENT, destructureEvent, NO_OUTPUT } from "kingly"
 
 // Define properties
 const FALLBACK = "FALLBACK";
@@ -67,11 +67,11 @@ function runOperation(extendedState, eventData, settings) {
         params: task
       }],
     }
-    : {updates: [], outputs: []}
+    : { updates: [], outputs: [] }
 }
 
 function startTimer(extendedState, eventData, settings) {
-  const { timeout} = settings;
+  const { timeout } = settings;
 
   return {
     updates: [],
@@ -107,7 +107,7 @@ function renderError(extendedState, eventData, settings) {
     updates: [],
     outputs: [{
       command: COMMAND_RENDER,
-      params: { display: ERROR }
+      params: { display: ERR, data: eventData }
     }],
   }
 }
@@ -121,13 +121,6 @@ export const fsmDef = {
   updateState
 };
 
-export function factory(settings){
+export function factory(settings) {
   return createStateMachine(fsmDef, settings)
-}
-
-// TODO:  compile the factory into a regular function
-function compiledFactory(settings){
-  return function suspenseFsm(event){
-    const eventName =
-  }
 }

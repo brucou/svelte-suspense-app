@@ -1,8 +1,8 @@
 <script>
 import {NO_OUTPUT, createStateMachine} from "kingly"
 import emitonoff from "emitonoff";
-// import {commands, events, factory, fsmDef, properties} from "suspense-fsm"
-import {commands, events, factory, fsmDef, properties} from "./svelte-suspense-fsm"
+import {commands, events, factory, fsmDef, properties} from "suspense-fsm"
+// import {commands, events, factory, fsmDef, properties} from "./svelte-suspense-fsm"
 
 
 // props
@@ -14,6 +14,7 @@ export let timeout;
 let done;
 let stillLoading;
 let errorOccurred;
+let data;
 const display="inline";
 const noDisplay="none";
 
@@ -55,10 +56,12 @@ const defaultCommandHandlers = {
     run(intents, {task, timeout});
   },
   [COMMAND_RENDER]: function (dispatch, params, effectHandlers){
-    const {display, data} = params;
+    const display = params.display;
+    data = params.data;
     done = display === MAIN;
     stillLoading = display === FALLBACK;
     errorOccurred = display === ERR;
+    debugger
   },
 }
 const defaultEffectHandlers = {
@@ -145,14 +148,12 @@ eventEmitter.subscribe({
 
 {#if stillLoading }
   <slot name="fallback" dispatch={next} intents={intents} ></slot>
-{/if }
-{#if errorOccurred }
-  <slot name="error" dispatch={next} intents={intents} ></slot>
-{/if }
-{#if done }
-  <slot dispatch={next} intents={intents} ></slot>
+{:else if errorOccurred }
+  <slot name="error" dispatch={next} intents={intents} data={data}></slot>
+{:else if done }
+  <slot dispatch={next} intents={intents} data={data}></slot>
 {:else }
 <div class="incognito">
   <slot dispatch={next} intents={intents} ></slot>
-  </div>
+ </div>
 {/if }

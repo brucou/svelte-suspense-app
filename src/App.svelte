@@ -17,8 +17,9 @@
 	function fetchAlbums(intents, {settings}){
 	  const {done, failed} = intents;
       axios.get(iTunesUrl)
-           .then(res => {albums = res.data.feed.entry})
-           .then(() => done(void 0))
+           .then(res => res.data.feed.entry)
+           .then(done)
+           .catch(failed)
     }
 
 </script>
@@ -26,16 +27,21 @@
 <div class="app">
     <Header />
     <div class="albums">
-        <Suspense task={fetchAlbums} timeout=10>
+        <Suspense task={fetchAlbums} let:data={albums} timeout=10>
             <div slot="fallback" class="album-img">
                 <img alt="" src="https://media.giphy.com/media/y1ZBcOGOOtlpC/200.gif" />
             </div>
+            <div slot="error" class="album-img">
+              <h1>ERROR!</h1>
+            </div>
             <LazyLoadContainer>
-                {#each albums as album, i}
-                <LazyLoad id="{i}">
-                    <Album {album} />
-                </LazyLoad >
-                {/each}
+                {#if albums}
+                  {#each albums as album, i}
+                  <LazyLoad id="{i}">
+                      <Album {album} />
+                  </LazyLoad >
+                  {/each}
+                {/if }
             </LazyLoadContainer>
         </Suspense>
     </div>
