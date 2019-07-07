@@ -12,26 +12,32 @@ The main screen which will hold the loaded image is handled with a suspense func
 ````html
 let albums=[];
 
-function fetchAlbums(intents, {task, timeout}){
+function fetchAlbums(intents, {settings}){
   const {done, failed} = intents;
   axios.get(iTunesUrl)
-       .then(res => {albums = res.data.feed.entry})
-       .then(() => done(void 0))
+       .then(res => res.data.feed.entry)
+       .then(done)
+       .catch(failed)
 }
  
 <div class="app">
     <Header />
     <div class="albums">
-        <Suspense task={fetchAlbums} timeout=10>
+        <Suspense task={fetchAlbums} let:data={albums} timeout=10>
             <div slot="fallback" class="album-img">
                 <img alt="" src="https://media.giphy.com/media/y1ZBcOGOOtlpC/200.gif" />
             </div>
+            <div slot="error" class="album-img">
+                <h1>ERROR!</h1>
+            </div>
             <LazyLoadContainer>
-                {#each albums as album, i}
-                <LazyLoad id="{i}">
-                    <Album {album} />
-                </LazyLoad >
-                {/each}
+                {#if albums}
+                  {#each albums as album, i}
+                  <LazyLoad id="{i}">
+                      <Album {album} />
+                  </LazyLoad >
+                  {/each}
+                {/if }
             </LazyLoadContainer>
         </Suspense>
     </div>
@@ -95,7 +101,7 @@ image is loaded, completion is signaled and the wrapping `<a>` DOM element is di
 example, there is no need to pass data with the `done` or `failed` events. 
 
 In the previous example too, in the main `App` component, the list of albums is fetched, using 
-the `task` parameter of the `Suspense` component. When that is completed, the completion signal is
+the `task` parameter of the `Suspense` component. When that is completed, the completion signal with the fetched albums as data is
  sent to the `Suspense` component and the album list is displayed. 
 
 ## Issues
