@@ -25,7 +25,7 @@ function fetchAlbums(intents){
     <div class="albums">
         <Suspense task={fetchAlbums} let:data={albums} timeout=10>
             <div slot="fallback" class="album-img">
-                <img alt="" src="https://media.giphy.com/media/y1ZBcOGOOtlpC/200.gif" />
+                <img alt="loading" src="https://media.giphy.com/media/y1ZBcOGOOtlpC/200.gif" />
             </div>
             <div slot="error" class="album-img">
                 <h1>ERROR!</h1>
