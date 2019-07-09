@@ -61,7 +61,6 @@ const defaultCommandHandlers = {
     done = display === MAIN;
     stillLoading = display === FALLBACK;
     errorOccurred = display === ERR;
-    debugger
   },
 }
 const defaultEffectHandlers = {
@@ -79,7 +78,7 @@ if (customRender){
     [COMMAND_RENDER]: function compose(dispatch, params, effectHandlers){
     defaultRender(dispatch, params, effectHandlers);
     customRender (dispatch, params, effectHandlers);
-  }
+    }
   }
 }
 
@@ -152,8 +151,7 @@ eventEmitter.subscribe({
   <slot name="error" dispatch={next} intents={intents} data={data}></slot>
 {:else if done }
   <slot dispatch={next} intents={intents} data={data}></slot>
-{:else }
+{/if}
 <div class="incognito">
   <slot dispatch={next} intents={intents} ></slot>
  </div>
-{/if }

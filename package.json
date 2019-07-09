@@ -15,7 +15,7 @@
     "kingly": "^0.20.0"
   },
   "dependencies": {
-    "svelte-suspense": "^0.10.4",
+    "svelte-suspense": "^0.10.6",
     "axios": "^0.19.0",
     "svelte-lazyload": "^0.0.4",
     "moment": "^2.24.0"

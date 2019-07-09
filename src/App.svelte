@@ -14,7 +14,7 @@
 	// Define the rendering props
 	let albums=[];
 
-	function fetchAlbums(intents, {settings}){
+	function fetchAlbums(intents){
 	  const {done, failed} = intents;
       axios.get(iTunesUrl)
            .then(res => res.data.feed.entry)

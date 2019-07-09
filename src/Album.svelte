@@ -13,21 +13,23 @@ $: date=album["im:releaseDate"].label
 function formatDate(date, format) {
   return moment(date).format(format);
 };
-
-// index in events array
-const DONE = 1
+function logSomething(){
+  debugger
+console.log(`logger`)
+}
 
 </script>
+
 
 <ul class="album">
     <li class="album-item">
         <Suspense let:intents={{done, failed}} timeout=0>
             <div slot="fallback" class="album-img">
-                <img alt="" src="https://media.giphy.com/media/y1ZBcOGOOtlpC/200.gif" />
+                <img alt="loading" src="https://media.giphy.com/media/y1ZBcOGOOtlpC/200.gif" />
             </div>
             <a href={link} target="blank" class="link">
                 <img class="album-img"
-                     on:load="{() => done(void 0)}"
+                     on:load={done}
                      src={image}
                      alt={'itunes' + Math.random()} />
             </a>

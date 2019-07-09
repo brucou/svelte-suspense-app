@@ -48,10 +48,8 @@ function fetchAlbums(intents){
 The default slot content of the `Suspense` component will be immediately put in the DOM and 
 hidden (`display: none`). Two things can happen:
 
-- the default slot content signals completion before `settings.duration` milliseconds. In that 
-case, the slot content is displayed as soon as it has indicated completion
-- the default slot content does not signal completion before `settings.duration` milliseconds 
-expires. In that case, the fallback content (e.g. the `fallback` slot content) will be displayed. When the default slot content signals completion, it will be displayed.
+- completion is signalled (`done` or `failed`) before `timeout` milliseconds. In that case, the corresponding slot content (default slot or `error` slot) is displayed as soon as the completion signal is processed
+- completion is not signalled before `timeout` milliseconds expires. In that case, the fallback content (e.g. the `fallback` slot content) will be displayed. When the default slot content signals completion, it will be displayed. When completion is signalled (`done` or `failed`), the corresponding slot content (default slot or `error` slot) is displayed as soon as the completion signal is processed
  
 The `Suspense` component behaviour is better summarized with the defining state machine:
 
@@ -68,7 +66,7 @@ The `Album` component also benefits from the suspense functionality:
             </div>
             <a href={link} target="blank" class="link">
                 <img class="album-img"
-                     on:load="{() => done(void 0)}"
+                     on:load="{done}"
                      src={image}
                      alt={'itunes' + Math.random()} />
             </a>
